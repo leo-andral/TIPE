@@ -10,12 +10,15 @@ typedef struct s_image {
     uint8_t* pixels;
 } Image;
 
-extern const int maxColor;
+extern const uint8_t minColor;
+extern const uint8_t maxColor;
 
 uint8_t getPix(Image* img, int i, int j);
 void setPix(Image* img, int i, int j, uint8_t v);
+void addPix(Image* img, int i, int j, uint8_t v);
 
 Image* creerImage(int haut, int larg);
+Image* creerImageCarre(int taille);
 void detruireImage(Image* img);
 void printImage(Image* img);
 Image* redim(Image* img, int n_haut, int n_larg);
