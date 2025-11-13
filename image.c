@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+
 #include "image.h"
 
 /**
-*  Manipulation d'images
+*  Bibliothèque pour la manipulation d'images
 **/
 
 // Couleur "vide" sur 8 bits
