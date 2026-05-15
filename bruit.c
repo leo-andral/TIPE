@@ -1,9 +1,10 @@
-#include "image.h"
 #include <assert.h>
 #include <time.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "image.h"
 
 /*  Crée du bruit visuel (comme à la télé). 
     Renvoie une image de taille `haut` * `larg` */
