@@ -6,9 +6,9 @@
 
 #include "image.h"
 
-/**
-*  Bibliothèque pour la manipulation d'images
-**/
+/*
+    Bibliothèque pour la manipulation d'images
+*/
 
 // Couleur "vide" sur 8 bits
 const uint8_t minColor = 0;
@@ -90,9 +90,9 @@ void printImage(Image* img) {
     printf("-------FIN-------\n");
 }
 
-/**
-*   Import / Export
-**/
+/*
+    Import / Export
+*/
 
 // Importe le fichier `filename` de format `.ppm`. Renvoie NULL en cas d'erreur
 Image* importerImage(char* filename) {

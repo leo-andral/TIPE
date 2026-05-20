@@ -13,6 +13,6 @@ Matrice* creer_matrice(int n);
 void detruit_matrice(Matrice* mat);
 
 // Generation Diamond-Square sur une matrice
-void generation_DC(Matrice* mat);
+void generation_DC(Matrice* mat, double scaling);
 
 #endif

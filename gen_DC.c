@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "gen_DC.h"
+#include "math2.h"
 
 // Initialise par -1 une matrice carré de taille 2^ `n` +1
 Matrice* creer_matrice(int n) {
@@ -36,12 +37,16 @@ void detruit_matrice(Matrice* mat) {
 
 /*
     Modifie la valeur de la matrice à la position `i` `j` par `e` (valeur entre 0 et 1) si la case n'est pas déjà intialisé
+    Si `e` plus grand que 1, initialise a 1
+    Si `e` plus petit que 0, initialise a 0
     Renvoie true si la case a été initialisé, false sinon
 */
 bool set_val_libre(Matrice* mat, int i, int j, double e) {
     assert(0 <= i && i < mat->taille);
     assert(0 <= j && j < mat->taille);
-    assert(0 <= e && e <= 1);
+
+    if (e < 0) e = 0;
+    else if (1 < e) e = 1;
 
     if (mat->tab[i][j] == -1) {
         mat->tab[i][j] = e;
@@ -50,26 +55,22 @@ bool set_val_libre(Matrice* mat, int i, int j, double e) {
     return false;
 }
 
-// Renvoie un double entre 0 et 1 (inclus)
-double random_double() {
-    int precision = 6; // i.e. nombre de chiffre apres la vigule du double
-    // Possible d'extraire la variable mais précision uniforme pour toute les valeur = mieux
-
-    int ordre_grandeur = pow(10, precision);
-    int random = rand() % (ordre_grandeur+1);
-    printf("OdG = %d, Rdm = %d, RdmD = %f\n", ordre_grandeur, random, (double)random/ordre_grandeur);
-    return (double)random / ordre_grandeur;
-}
-
-// Genère le terrain sur la matrice `mat` en utilisant l'algorithme Diamant-Carré
-void generation_DC(Matrice* mat) {
+/*
+    Genère le terrain sur la matrice `mat` en utilisant l'algorithme Diamant-Carré
+    L'importance de la valeur aléatoire ajouté selon l'étape est définit par `scaling` càd
+    que chaque étape ajoutera `scaling` fois moins d'aléatoire
+*/
+void generation_DC(Matrice* mat, double scaling) {
     assert(mat != NULL);
     
     // Definit les quatres coins de valeurs aléatoires
-    set_val_libre(mat, 0, 0, random_double());
-    set_val_libre(mat, 0, mat->taille -1, random_double());
-    set_val_libre(mat, mat->taille -1, 0, random_double());
-    set_val_libre(mat, mat->taille -1, mat->taille -1, random_double());
+    set_val_libre(mat, 0, 0, random_double_global());
+    set_val_libre(mat, 0, mat->taille -1, random_double_global());
+    set_val_libre(mat, mat->taille -1, 0, random_double_global());
+    set_val_libre(mat, mat->taille -1, mat->taille -1, random_double_global());
+
+    // Multiplicateur décroissant de la valeur d'aléatoire ajouté à chaque étape 
+    double multiplicateur_aleatoire = 1/scaling;
 
     // Répétition des étapes DIAMANT - CARRÉ jusqu'à une matrice remplie ( `n` étape )
     for (int etape = 0; etape < mat->n; etape += 1) {
@@ -77,13 +78,13 @@ void generation_DC(Matrice* mat) {
         int dist = pow(2, mat->n - etape);
         int dist_2 = dist/2;
         
-        printf("ETAPE %d -- dist = %d\n", etape, dist); // DEBUG
+        // printf("Debut etape %d / Dist = %d\n", etape, dist); // DEBUG
         /*
             Etape DIAMANT : aucun problème d'accéssibilité, tout les milieux se trouve dans le carré
             Les milieux à calculer se trouvent dans un cadrillage carré, de distance `dist`, démarrant au point (`dist_2`, `dist_2`)
             Le point (i,j) est le milieu à calculer
         */
-        printf("Etape DIAMANT\n"); // DEBUG
+        // printf("Debut etape DIAMANT\n"); // DEBUG
         for (int i = dist_2; i < mat->taille; i += dist) {
             for (int j = dist_2; j < mat->taille; j += dist) {
 
@@ -98,9 +99,9 @@ void generation_DC(Matrice* mat) {
                 ) /4;
 
                 // Ecriture de la valeur
-                // TODO : Ajouter la valeur aléatoire
-                mat->tab[i][j] = val_moy;
-                printf("Pt (%d, %d) = %f \n", i, j, mat->tab[i][j]); // DEBUG
+                // TODO : Ajouter VRAIMENT la valeur aléatoire
+                set_val_libre(mat, i, j, val_moy + random_pos_neg()*multiplicateur_aleatoire);
+                // printf("Point genere : (%d, %d) = %f \n", i, j, mat->tab[i][j]); // DEBUG
             }
         }
 
@@ -109,10 +110,9 @@ void generation_DC(Matrice* mat) {
             Les milieux à calculer se trouvent dans un cadrillage diagonal, de distance `dist` , démarrant au point (0, `dist_2`)
             Le point (i,j) est le milieu à calculer
         */
-        printf("ETAPE CARRÉ\n");
+        // printf("ETAPE CARRÉ\n"); // DEBUG
         bool offset = true; // Booléan sur le décallage du cadrillage
         for (int i = 0; i < mat->taille; i += dist_2) {
-            // TODO : vérifier le code ci-dessous
             for (int j = offset*dist_2; j < mat->taille; j += dist) {
                 // Calcul de la valeur
                 double somme_val = 0;
@@ -140,12 +140,15 @@ void generation_DC(Matrice* mat) {
                 }
                 
                 // Ecriture de la valeur
-                // TODO : ajouter la valeur aléatoire
-                mat->tab[i][j] = somme_val/nbr_val;
-                printf("Pt (%d, %d) = %f\n", i, j, mat->tab[i][j]); // DEBUG
+                // TODO : ajouter VRAIMENT la valeur aléatoire
+                set_val_libre(mat, i, j, somme_val/nbr_val + random_pos_neg()*multiplicateur_aleatoire);
+                // printf("Point genere : (%d, %d) = %f\n", i, j, mat->tab[i][j]); // DEBUG
             }
-            offset = !offset; // Le décallage se fait 1 fois sur 2
+            // Le décallage du cadrillage se fait 1 fois sur 2
+            offset = !offset;
         }
+        // La valeur aléatoire est moins importante après chaque étape
+        multiplicateur_aleatoire = multiplicateur_aleatoire/scaling;
     }
-    printf("Fin de la génération DC\n");
+    // printf("Fin de la génération DC\n"); // DEBUG
 }
