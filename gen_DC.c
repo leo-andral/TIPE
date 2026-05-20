@@ -56,12 +56,18 @@ bool set_val_libre(Matrice* mat, int i, int j, double e) {
 }
 
 /*
-    Genère le terrain sur la matrice `mat` en utilisant l'algorithme Diamant-Carré
-    L'importance de la valeur aléatoire ajouté selon l'étape est définit par `scaling` càd
-    que chaque étape ajoutera `scaling` fois moins d'aléatoire
+    Genère un terrain sur la matrice `mat` en utilisant l'algorithme Diamant-Carré
+    `h` = double entre 0 et 1 (inclus)
+        -> 0 = terrain "aléatoire bordelique"
+        -> 1 = terrain "aléatoire cohérent"
+
+    `h` definit la rugosité (roughness) du terrain généré
+    L'importance de la valeur aléatoire ajouté selon l'étape est définit par `h` càd
+    que chaque étape ajoutera 2 ^ `h` fois moins d'aléatoire
 */
-void generation_DC(Matrice* mat, double scaling) {
+void generation_DC(Matrice* mat, double h) {
     assert(mat != NULL);
+    assert(0 <= h && h <= 1);
     
     // Definit les quatres coins de valeurs aléatoires
     set_val_libre(mat, 0, 0, random_double_global());
@@ -69,8 +75,10 @@ void generation_DC(Matrice* mat, double scaling) {
     set_val_libre(mat, mat->taille -1, 0, random_double_global());
     set_val_libre(mat, mat->taille -1, mat->taille -1, random_double_global());
 
-    // Multiplicateur décroissant de la valeur d'aléatoire ajouté à chaque étape 
-    double multiplicateur_aleatoire = 1/scaling;
+    // Définit de combien l'amplitude des valeurs aléatoires ajoutées décroit à chaque étape
+    double multiplicateur_aleatoire = pow(2, -h);
+    // Amplitude actuelle de la valeur aléatoire ajouté
+    double amplitude = multiplicateur_aleatoire;
 
     // Répétition des étapes DIAMANT - CARRÉ jusqu'à une matrice remplie ( `n` étape )
     for (int etape = 0; etape < mat->n; etape += 1) {
@@ -100,7 +108,7 @@ void generation_DC(Matrice* mat, double scaling) {
 
                 // Ecriture de la valeur
                 // TODO : Ajouter VRAIMENT la valeur aléatoire
-                set_val_libre(mat, i, j, val_moy + random_pos_neg()*multiplicateur_aleatoire);
+                set_val_libre(mat, i, j, val_moy + random_pos_neg()*random_double_global()*amplitude);
                 // printf("Point genere : (%d, %d) = %f \n", i, j, mat->tab[i][j]); // DEBUG
             }
         }
@@ -141,14 +149,14 @@ void generation_DC(Matrice* mat, double scaling) {
                 
                 // Ecriture de la valeur
                 // TODO : ajouter VRAIMENT la valeur aléatoire
-                set_val_libre(mat, i, j, somme_val/nbr_val + random_pos_neg()*multiplicateur_aleatoire);
+                set_val_libre(mat, i, j, somme_val/nbr_val + random_pos_neg()*random_double_global()*amplitude);
                 // printf("Point genere : (%d, %d) = %f\n", i, j, mat->tab[i][j]); // DEBUG
             }
             // Le décallage du cadrillage se fait 1 fois sur 2
             offset = !offset;
         }
         // La valeur aléatoire est moins importante après chaque étape
-        multiplicateur_aleatoire = multiplicateur_aleatoire/scaling;
+        amplitude *= multiplicateur_aleatoire;
     }
     // printf("Fin de la génération DC\n"); // DEBUG
 }

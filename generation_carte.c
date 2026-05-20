@@ -22,14 +22,14 @@ Image* matrice_to_image(Matrice* mat) {
 
 
 int main() {
-    Matrice* test = creer_matrice(2);
+    Matrice* test = creer_matrice(1);
     test->tab[0][1] = 0.5;
     detruit_matrice(test);
 
     random_setseed(67);
 
-    Matrice* test_gen = creer_matrice(10);
-    generation_DC(test_gen, 2);
+    Matrice* test_gen = creer_matrice(6);
+    generation_DC(test_gen, 0.75);
     Image* img = matrice_to_image(test_gen);
     bool successful_export = exporterImage(img, "testResults/test.pgm");
     assert(successful_export);

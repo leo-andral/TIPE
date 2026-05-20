@@ -19,7 +19,10 @@ float smootherstep(float x) {
 
 const int globalPrecision = 6; // i.e. nombre de chiffre apres la vigule du flaot/double
 
-// Renvoie un double entre 0 et 1 (inclus)
+/*
+    Renvoie un double entre 0 et 1 (inclus) de précision `precision` 
+    i.e. un double entre 0 et 1 avec `precision` chiffres après la virgule
+*/
 double random_double(int precision) {
     int ordre_grandeur = pow(10, precision);
     int random = rand() % (ordre_grandeur+1);
@@ -32,7 +35,7 @@ double random_double_global() {
     return random_double(globalPrecision);
 }
 
-// Renvoie un aléatoirement 1 ou -1
+// Renvoie aléatoirement 1 ou -1
 int random_pos_neg() {
     int random = rand()%2;
     if (random == 1) return 1;
