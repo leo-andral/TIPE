@@ -107,7 +107,6 @@ void generation_DC(Matrice* mat, double h) {
                 ) /4;
 
                 // Ecriture de la valeur
-                // TODO : Ajouter VRAIMENT la valeur aléatoire
                 set_val_libre(mat, i, j, val_moy + random_pos_neg()*random_double_global()*amplitude);
                 // printf("Point genere : (%d, %d) = %f \n", i, j, mat->tab[i][j]); // DEBUG
             }
@@ -148,7 +147,6 @@ void generation_DC(Matrice* mat, double h) {
                 }
                 
                 // Ecriture de la valeur
-                // TODO : ajouter VRAIMENT la valeur aléatoire
                 set_val_libre(mat, i, j, somme_val/nbr_val + random_pos_neg()*random_double_global()*amplitude);
                 // printf("Point genere : (%d, %d) = %f\n", i, j, mat->tab[i][j]); // DEBUG
             }
