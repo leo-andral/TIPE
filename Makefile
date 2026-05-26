@@ -1,10 +1,11 @@
-.PHONY : run clean clean_obj clean_exec
+.PHONY : build run clean clean_obj clean_exec
 .DEFAULT_GOAL := run
 
 # Variables
 CFLAGS = -lm -Wall -fsanitize=address
 libraries = image.o math2.o gen_DC.o
 objects = $(libraries) bruit.o generation_carte.o
+executables = bruit generation_carte
 
 # Compilation rules
 image.o : image.h
@@ -19,6 +20,8 @@ bruit: bruit.o $(libraries)
 generation_carte : generation_carte.o $(libraries)
 	gcc -o generation_carte $(CFLAGS) generation_carte.o $(libraries)
 
+build : $(executables)
+
 # Run rules
 run : generation_carte
 	./generation_carte
@@ -30,4 +33,4 @@ clean_obj :
 	rm -f $(objects)
 
 clean_exec :
-	rm -f bruit generation_carte
+	rm -f $(executables)
