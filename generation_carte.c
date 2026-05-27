@@ -24,14 +24,15 @@ Image* matrice_to_image(Matrice* mat) {
 void print_cli_help() {
     printf("Utilisation : generation_carte TAILLE FICHIER\n");
     printf("         ou : generation_carte TAILLE FICHIER ROUGHNESS SEED\n");
-    printf("Generer une heightmap carré de taille (2^TAILLE)+1 pixels de large\n");
+    printf("Genere une heightmap carré au format .ppm en utilisant l'algorithme Diamant-Carré\n");
     printf("\n");
-    printf("Options disponibles :\n");
+    printf("Paramètres disponibles :\n");
     printf("    EXAMPLE (= valeur par défaut) : explication\n");
     printf("\n");
+    printf("    TAILLE : entier superieur a 0 tel que l'image fasse (2^TAILLE)+1 de large.\n");
+    printf("    FICHIER : le nom du fichier de sortie\n");
     printf("    ROUGHNESS (= 1.0) : float entre 0. et 1. définissant \"l'aléatoirité\" du terrain généré\n");
     printf("    SEED (= aléatoire) : entier étant la graine d'aléatoire utilisé\n");
-    printf("    FICHIER (= nom du fichier) : le nom du fichier de sortie\n");
 }
 
 int main(int argc, char* argv[]) {
